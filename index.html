@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Umrah Package Calculator</title>
+<style>
+:root{--bg:#f6f5f0;--card:#fff;--tx:#1d2a24;--mu:#66736c;--ac:#0f6b4b;--ac2:#e6f2ec;--bd:#dcdfd8;--dg:#b42318;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121a16;--card:#1b2620;--tx:#e8eee9;--mu:#9aa89f;--ac:#3fbf8c;--ac2:#1f3a2e;--bd:#2c3a32;--dg:#f0867c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121a16;--card:#1b2620;--tx:#e8eee9;--mu:#9aa89f;--ac:#3fbf8c;--ac2:#1f3a2e;--bd:#2c3a32;--dg:#f0867c;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:16px}
+.wrap{max-width:980px;margin:0 auto}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:16px;margin:0 0 10px;color:var(--ac)}
+.sub{color:var(--mu);margin:0 0 16px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:block;font-size:12px;color:var(--mu);margin-bottom:3px}
+input,select{width:100%;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+button{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:9px 14px;font:inherit;cursor:pointer}
+button.x{background:transparent;color:var(--dg);padding:4px 8px;border:1px solid var(--bd)}
+.sc{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}
+th{color:var(--mu);font-weight:600;font-size:12px}
+td.n,th.n{text-align:right}
+.tot td{font-weight:700;background:var(--ac2)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:10px}
+.row>div{flex:1;min-width:110px}
+.bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+#quote .qh{display:none}
+@media print{
+body{background:#fff;color:#000;padding:0}
+.noprint{display:none!important}
+.card{border:0;padding:0}
+#quote{display:block}
+#quote .qh{display:block;margin-bottom:12px}
+:root{--card:#fff;--tx:#000;--mu:#444;--bd:#bbb;--ac:#0f6b4b;--ac2:#e6f2ec}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="noprint">
+<h1>Umrah Package Calculator</h1>
+<p class="sub">Makkah / Madina hotels, 4-3-2 bed sharing, SAR se PKR, ticket, visa aur PDF.</p>
+
+<div class="card">
+<h2>1. General Settings</h2>
+<div class="grid">
+<div><label>Agency Name</label><input id="agency" placeholder="Your Travels"></div>
+<div><label>1 SAR = PKR</label><input id="rate" type="number" step="0.01" value="75"></div>
+<div><label>Ticket Price (PKR / person)</label><input id="ticket" type="number" value="150000"></div>
+<div><label>Visa Price (SAR / person)</label><input id="visa" type="number" value="450"></div>
+<div><label>Margin (PKR / person)</label><input id="margin" type="number" value="0"></div>
+</div>
+</div>
+
+<div class="card">
+<h2>2. Makkah Hotels (rate SAR per person per night)</h2>
+<div class="sc"><table id="tMakkah"></table></div>
+<div class="row">
+<div style="flex:2"><label>Hotel Name</label><input id="mkName"></div>
+<div><label>Distance</label><input id="mkDist" placeholder="200m"></div>
+<div><label>4 Bed</label><input id="mk4" type="number"></div>
+<div><label>3 Bed</label><input id="mk3" type="number"></div>
+<div><label>2 Bed</label><input id="mk2" type="number"></div>
+<div style="flex:0"><button onclick="addHotel('makkah')">Add</button></div>
+</div>
+</div>
+
+<div class="card">
+<h2>3. Madina Hotels (rate SAR per person per night)</h2>
+<div class="sc"><table id="tMadina"></table></div>
+<div class="row">
+<div style="flex:2"><label>Hotel Name</label><input id="mdName"></div>
+<div><label>Distance</label><input id="mdDist" placeholder="150m"></div>
+<div><label>4 Bed</label><input id="md4" type="number"></div>
+<div><label>3 Bed</label><input id="md3" type="number"></div>
+<div><label>2 Bed</label><input id="md2" type="number"></div>
+<div style="flex:0"><button onclick="addHotel('madina')">Add</button></div>
+</div>
+</div>
+
+<div class="card">
+<h2>4. Package</h2>
+<div class="grid">
+<div><label>Customer Name</label><input id="cust"></div>
+<div><label>Makkah Hotel</label><select id="selMakkah"></select></div>
+<div><label>Makkah Nights</label><input id="nMakkah" type="number" value="10"></div>
+<div><label>Madina Hotel</label><select id="selMadina"></select></div>
+<div><label>Madina Nights</label><input id="nMadina" type="number" value="5"></div>
+<div><label>Total Persons</label><input id="pax" type="number" value="1"></div>
+</div>
+<div class="bar"><button onclick="window.print()">Print / Save PDF</button></div>
+</div>
+</div>
+
+<div class="card" id="quote">
+<div class="qh">
+<h1 id="qAgency"></h1>
+<div id="qInfo" class="sub"></div>
+</div>
+<h2 class="noprint" style="margin-top:0">Price Quotation</h2>
+<div class="sc"><table id="tQuote"></table></div>
+<p class="sub" id="qNote" style="margin-top:10px"></p>
+</div>
+</div>
+
+<script>
+var KEY="umrahCalcV1";
+var S={hotels:[
+{id:1,city:"makkah",name:"Sample Makkah Hotel",dist:"300m",r4:60,r3:75,r2:100},
+{id:2,city:"madina",name:"Sample Madina Hotel",dist:"200m",r4:50,r3:65,r2:90}
+],f:{}};
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&p.hotels)S=p}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function $(i){return document.getElementById(i)}
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function num(i){return parseFloat($(i).value)||0}
+function fmt(n){return Math.round(n).toLocaleString("en-US")}
+var FIELDS=["agency","rate","ticket","visa","margin","cust","nMakkah","nMadina","pax"];
+FIELDS.forEach(function(i){
+if(S.f&&S.f[i]!==undefined)$(i).value=S.f[i];
+$(i).addEventListener("input",function(){S.f=S.f||{};S.f[i]=$(i).value;save();render()});
+});
+function addHotel(city){
+var p=city==="makkah"?"mk":"md";
+var name=$(p+"Name").value.trim();
+if(!name)return;
+var id=Date.now();
+S.hotels.push({id:id,city:city,name:name,dist:$(p+"Dist").value,r4:+$(p+"4").value||0,r3:+$(p+"3").value||0,r2:+$(p+"2").value||0});
+["Name","Dist","4","3","2"].forEach(function(s){$(p+s).value=""});
+save();render();
+}
+function delHotel(id){S.hotels=S.hotels.filter(function(h){return h.id!==id});save();render()}
+function editRate(id,k,v){S.hotels.forEach(function(h){if(h.id===id)h[k]=parseFloat(v)||0});save();render(true)}
+function hotelTable(city,el){
+var h='<tr><th>Hotel</th><th>Distance</th><th class="n">4 Bed</th><th class="n">3 Bed</th><th class="n">2 Bed</th><th></th></tr>';
+S.hotels.filter(function(x){return x.city===city}).forEach(function(x){
+h+='<tr><td>'+esc(x.name)+'</td><td>'+esc(x.dist||"")+'</td>'+
+["r4","r3","r2"].map(function(k){return '<td class="n"><input style="width:70px" type="number" value="'+x[k]+'" onchange="editRate('+x.id+',\''+k+'\',this.value)"></td>'}).join("")+
+'<td><button class="x" onclick="delHotel('+x.id+')">Delete</button></td></tr>';
+});
+$(el).innerHTML=h;
+}
+function fillSel(city,el){
+var cur=$(el).value;
+$(el).innerHTML=S.hotels.filter(function(x){return x.city===city}).map(function(x){return '<option value="'+x.id+'">'+esc(x.name)+'</option>'}).join("");
+if(cur)$(el).value=cur;
+}
+$("selMakkah").addEventListener("change",render);
+$("selMadina").addEventListener("change",render);
+function render(keep){
+hotelTable("makkah","tMakkah");hotelTable("madina","tMadina");
+fillSel("makkah","selMakkah");fillSel("madina","selMadina");
+var mk=S.hotels.filter(function(x){return x.id==$("selMakkah").value})[0];
+var md=S.hotels.filter(function(x){return x.id==$("selMadina").value})[0];
+var rate=num("rate"),nm=num("nMakkah"),nd=num("nMadina"),pax=num("pax")||1;
+var visaSar=num("visa"),ticket=num("ticket"),margin=num("margin");
+var h='<tr><th>Item</th><th class="n">4 Bed Sharing</th><th class="n">3 Bed Sharing</th><th class="n">2 Bed Sharing</th></tr>';
+var keys=["r4","r3","r2"];
+function row(label,fn){return '<tr><td>'+label+'</td>'+keys.map(function(k){return '<td class="n">'+fn(k)+'</td>'}).join("")+'</tr>'}
+var mkS=function(k){return mk?mk[k]*nm:0},mdS=function(k){return md?md[k]*nd:0};
+h+=row("Makkah SAR ("+nm+" nights)",function(k){return fmt(mkS(k))+" SAR"});
+h+=row("Madina SAR ("+nd+" nights)",function(k){return fmt(mdS(k))+" SAR"});
+h+=row("Visa SAR",function(){return fmt(visaSar)+" SAR"});
+h+=row("Total SAR",function(k){return fmt(mkS(k)+mdS(k)+visaSar)+" SAR"});
+h+=row("Converted PKR @ "+rate,function(k){return fmt((mkS(k)+mdS(k)+visaSar)*rate)});
+h+=row("Ticket PKR",function(){return fmt(ticket)});
+if(margin)h+=row("Service / Margin PKR",function(){return fmt(margin)});
+var per=function(k){return (mkS(k)+mdS(k)+visaSar)*rate+ticket+margin};
+h+='<tr class="tot"><td>Per Person (PKR)</td>'+keys.map(function(k){return '<td class="n">'+fmt(per(k))+'</td>'}).join("")+'</tr>';
+if(pax>1)h+='<tr class="tot"><td>Total for '+pax+' persons (PKR)</td>'+keys.map(function(k){return '<td class="n">'+fmt(per(k)*pax)+'</td>'}).join("")+'</tr>';
+$("tQuote").innerHTML=h;
+$("qAgency").textContent=$("agency").value||"Umrah Package Quotation";
+var info=[];
+if($("cust").value)info.push("Customer: "+$("cust").value);
+if(mk)info.push("Makkah: "+mk.name+(mk.dist?" ("+mk.dist+")":"")+" - "+nm+" nights");
+if(md)info.push("Madina: "+md.name+(md.dist?" ("+md.dist+")":"")+" - "+nd+" nights");
+info.push("Date: "+new Date().toLocaleDateString("en-GB"));
+$("qInfo").innerHTML=info.map(esc).join("<br>");
+$("qNote").textContent="Rate: 1 SAR = "+rate+" PKR. Includes hotels, visa and air ticket. Prices subject to change.";
+}
+render();
+</script>
+</body>
+</html>
